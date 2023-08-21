@@ -1,0 +1,1 @@
+export 'package:gasolina_app/src/models/randomuser_model.dart';
