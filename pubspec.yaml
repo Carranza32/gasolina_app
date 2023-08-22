@@ -51,6 +51,7 @@ dependencies:
   google_maps_flutter: ^2.4.0
   google_maps_flutter_web: ^0.5.3
   geolocator: ^9.0.2
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

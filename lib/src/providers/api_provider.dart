@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:js_interop';
 
 import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class ApiProvider with ChangeNotifier {
 
   set gasSelected(GasModel gas) {
     _gasSelected = gas;
+    print("gasSelected" + _gasSelected.isNull.toString());
     notifyListeners();
   }
 

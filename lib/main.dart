@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.light,
         theme: ThemeData(
-          colorSchemeSeed: const Color(0xffd9e7cb),
+          colorSchemeSeed: Colors.indigo,
           scaffoldBackgroundColor: const Color(0xfff0f3e8),
           // elevatedButtonTheme: authButtonTheme(),
           // inputDecorationTheme: authFormFieldTheme(),

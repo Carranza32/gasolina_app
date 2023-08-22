@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/constants.dart';
 import 'package:gasolina_app/responsive.dart';
@@ -35,11 +37,17 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               // flex: _size.width > 1340 ? 8 : 10,
               flex: 9,
-              child: DetailsScreen(gas: apiProvider.gasSelected ?? stations[0]),
+              child: (!apiProvider.gasSelected.id.isNull) ? DetailsScreen(gas: apiProvider.gasSelected) : _buildEmptyDetails(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEmptyDetails(){
+    return const Center(
+      child: Text("Selecciona una gasolinera"),
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:gasolina_app/src/providers/api_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants.dart';
 import '../screens/index.dart';
 
 class GasListTile extends StatelessWidget {
@@ -16,36 +17,68 @@ class GasListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiProvider = Provider.of<ApiProvider>(context);
 
-    return OpenContainer(
-      transitionType: ContainerTransitionType.fade,
-      transitionDuration: const Duration(milliseconds: 500),
-      closedElevation: 0,
-      closedColor: Colors.transparent,
-      openBuilder: (context, action) {
-        apiProvider.gasSelected = stations[index];
-        
-        return DetailsScreen(gas: stations[index]);
-      },
-      closedBuilder: (context, action) {
-        return ListTile(
-          leading: CircleAvatar(
-            child: Image(
-              image: AssetImage("assets/gasolineras/${stations[index].marca}.png"),
-            ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 255, 255, 255),
+        borderRadius: BorderRadius.circular(17),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Image(
+            image: AssetImage("assets/gasolineras/${stations[index].marca}.png"),
           ),
-          title: Text(stations[index].marca ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          subtitle: Text(stations[index].municipio ?? "", style: TextStyle(color: Colors.grey[600])),
+        ),
+        title: Text(stations[index].estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(stations[index].municipio ?? "", style: TextStyle(color: Colors.grey[600])),
+            const SizedBox(height: 15),
 
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('4.80\$', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 3),
-              Text('1.9 Km', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-            ],
+            Row(
+              children: [
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.directions, size: 14),
+                  label: const Text('Direcciones', style: TextStyle(fontSize: 12)),
+                  onPressed: () {},
+                ),
+
+                const SizedBox(width: 15),
+
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.share, size: 14),
+                  label: const Text('Compartir', style: TextStyle(fontSize: 12)),
+                  onPressed: () {},
+                )
+              ],
+            )
+          ],
+        ),
+
+        trailing: TextButton( 
+          onPressed: () {}, 
+          // styling the button
+          style: ElevatedButton.styleFrom( 
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(20),
+            // Button color
+            backgroundColor: kOnPrimaryColor, 
           ),
-        );
-      },
+          // icon of the button
+          child: const Icon(Icons.star_border, color: kPrimaryColor),
+        ),
+
+        onTap: () {
+          apiProvider.gasSelected = stations[index];
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DetailsScreen(gas: stations[index])),
+          );
+        },
+      ),
     );
   }
 }

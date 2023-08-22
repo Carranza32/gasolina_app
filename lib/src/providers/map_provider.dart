@@ -16,9 +16,11 @@ class MapProvider with ChangeNotifier {
 		_mapCompleter.complete(controller);
 		mapController = controller;
 
-
-
     notifyListeners();
+  }
+
+  void moveCamera(LatLng position){
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: position, zoom: 14)));
   }
 
   Future<Position> determinePosition() async {
