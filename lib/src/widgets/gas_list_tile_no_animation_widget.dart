@@ -3,8 +3,6 @@ import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:gasolina_app/src/providers/api_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants.dart';
-
 class GasListTileNoAnimationWidget extends StatelessWidget {
   final List<GasModel> stations;
   final int index;
@@ -21,6 +19,14 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: (apiProvider.gasSelected.id == stations[index].id)? Theme.of(context).colorScheme.primaryContainer : const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(17),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: ListTile(
         leading: CircleAvatar(
@@ -28,7 +34,7 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
             image: AssetImage("assets/gasolineras/${stations[index].marca}.png"),
           ),
         ),
-        title: Text(stations[index].marca ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(stations[index].estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,17 +61,12 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
           ],
         ),
 
-        trailing: TextButton( 
-          onPressed: () {}, 
-          // styling the button
-          style: ElevatedButton.styleFrom( 
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(20),
-            // Button color
-            backgroundColor: kOnPrimaryColor, 
-          ),
-          // icon of the button
-          child: const Icon(Icons.star_border, color: kPrimaryColor),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(stations[index].precio!.especialSc.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(stations[index].precio!.especialAuto.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+          ],
         ),
 
         onTap: () {

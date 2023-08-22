@@ -1,0 +1,1 @@
+enum GasTypeModel { especial, regular, diesel, iondiesel }

@@ -26,10 +26,6 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.light,
         theme: ThemeData(
           colorSchemeSeed: Colors.indigo,
-          scaffoldBackgroundColor: const Color(0xfff0f3e8),
-          // elevatedButtonTheme: authButtonTheme(),
-          // inputDecorationTheme: authFormFieldTheme(),
-          // appBarTheme: appBarTheme(),
           useMaterial3: true,
         ),
         darkTheme: ThemeData(

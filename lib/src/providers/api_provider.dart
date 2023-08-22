@@ -4,6 +4,7 @@ import 'dart:js_interop';
 
 import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:flutter/material.dart';
+import 'package:gasolina_app/src/models/gas_type_model.dart';
 import 'package:gasolina_app/src/models/place_search_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
@@ -18,14 +19,18 @@ class ApiProvider with ChangeNotifier {
   GasModel _gasSelected = GasModel();
   GasModel get gasSelected => _gasSelected;
 
-  set gasSelected(GasModel gas) {
-    _gasSelected = gas;
-    print("gasSelected" + _gasSelected.isNull.toString());
+  GasTypeModel _gasTypeSelected = GasTypeModel.especial;
+  GasTypeModel get gasTypeSelected => _gasTypeSelected;
+
+  set gasTypeSelected(GasTypeModel gasType) {
+    _gasTypeSelected = gasType;
     notifyListeners();
   }
 
-  // ValueNotifier<GasModel> _gasSelected => ValueNotifier<GasModel>(null);
-  // ValueNotifier<GasModel> get gasSelected => _gasSelected;
+  set gasSelected(GasModel gas) {
+    _gasSelected = gas;
+    notifyListeners();
+  }
 
 	List<PlaceSearchModel> _places = [];
 	List<PlaceSearchModel> get places => _places;

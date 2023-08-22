@@ -12,12 +12,14 @@ class SearchPlacesWidget extends StatelessWidget {
     final apiProvider = Provider.of<ApiProvider>(context);
 
     return SearchAnchor.bar(
-      barElevation: MaterialStateProperty.all(0),
+      barElevation: MaterialStateProperty.all(3),
+      viewElevation: 4,
       isFullScreen: true,
-      viewHintText: 'Search for a gas station',
+      viewHintText: 'Busca una direccion',
+      barHintText: 'Busca una direccion',
       searchController: apiProvider.searchController,
-      barBackgroundColor: MaterialStateProperty.all(const Color(0xffe5eadc)),
-      viewBackgroundColor: const Color(0xffe5eadc),
+      // barBackgroundColor: MaterialStateProperty.all(const Color(0xffe5eadc)),
+      // viewBackgroundColor: const Color(0xffe5eadc),
       viewTrailing: [
         IconButton(
           icon: const Icon(Icons.search),
