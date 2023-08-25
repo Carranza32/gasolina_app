@@ -64,8 +64,8 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(stations[index].precio!.especialSc.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
-            Text(stations[index].precio!.especialAuto.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(stations[index].precio!.regularSc.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(stations[index].precio!.regularAuto.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
           ],
         ),
 

@@ -99,7 +99,7 @@ class HomeScreen extends StatelessWidget {
               label: Text('Ion Diesel'),
             ),
           ],
-          selected: const <GasTypeModel>{GasTypeModel.especial},
+          selected: const <GasTypeModel>{GasTypeModel.regular},
           onSelectionChanged: (Set<GasTypeModel> newSelection) {
             apiProvider.gasTypeSelected(newSelection.first);
           },
