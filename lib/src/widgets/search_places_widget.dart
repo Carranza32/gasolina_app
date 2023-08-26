@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gasolina_app/src/models/place_search_model.dart';
+import 'package:gasolina_app/src/providers/map_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 import '../providers/api_provider.dart';
 
 class SearchPlacesWidget extends StatelessWidget {
@@ -10,6 +10,9 @@ class SearchPlacesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiProvider = Provider.of<ApiProvider>(context);
+    final mapProvider = Provider.of<MapProvider>(context);
+
+    // mapProvider.determinePosition().then((value) =>  apiProvider.getGasStations() );
 
     return SearchAnchor.bar(
       barElevation: MaterialStateProperty.all(3),
@@ -18,8 +21,6 @@ class SearchPlacesWidget extends StatelessWidget {
       viewHintText: 'Busca una direccion',
       barHintText: 'Busca una direccion',
       searchController: apiProvider.searchController,
-      // barBackgroundColor: MaterialStateProperty.all(const Color(0xffe5eadc)),
-      // viewBackgroundColor: const Color(0xffe5eadc),
       viewTrailing: [
         IconButton(
           icon: const Icon(Icons.search),
@@ -32,17 +33,19 @@ class SearchPlacesWidget extends StatelessWidget {
           },
         ),
       ],
-      suggestionsBuilder: (context, controller) {
-        apiProvider.searchPlaces(controller.text);
+      suggestionsBuilder: (context, controller) async {
+        if (controller.text.isEmpty) {
+          return List.empty();
+        }
 
-        final List<PlaceSearchModel> list = apiProvider.places;
+        final List<AutocompletePrediction> list = await apiProvider.searchPlaces(controller.text);
         
         return List<Widget>.generate(
           list.length,
           (int index) {
             return ListTile(
               titleAlignment: ListTileTitleAlignment.center,
-              title: Text(list[index].description),
+              title: Text(list[index].fullText),
             );
           },
         );

@@ -25,8 +25,8 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Gasolina App'),
       ),
       body: Responsive(
-        mobile: _listContent(stations),
-        tablet: _listContent(stations),
+        mobile: _listContentNoAnimation(stations, apiProvider),
+        tablet: _listContentNoAnimation(stations, apiProvider),
         desktop: Row(
           children: [
             Expanded(
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               // flex: _size.width > 1340 ? 8 : 10,
               flex: 9,
-              child: (!apiProvider.gasSelected.id.isNull) ? DetailsScreen(gas: apiProvider.gasSelected) : _buildEmptyDetails(),
+              child: (apiProvider.gasSelected.id != null) ? DetailsScreen(gas: apiProvider.gasSelected) : _buildEmptyDetails(),
             ),
           ],
         ),
@@ -99,9 +99,9 @@ class HomeScreen extends StatelessWidget {
               label: Text('Ion Diesel'),
             ),
           ],
-          selected: const <GasTypeModel>{GasTypeModel.regular},
+          selected: <GasTypeModel>{ apiProvider.gasTypeSelected },
           onSelectionChanged: (Set<GasTypeModel> newSelection) {
-            apiProvider.gasTypeSelected(newSelection.first);
+            apiProvider.gasTypeSelected = newSelection.first;
           },
         ),
 

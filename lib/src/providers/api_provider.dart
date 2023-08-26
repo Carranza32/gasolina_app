@@ -2,15 +2,12 @@
 import 'dart:io';
 import 'dart:js_interop';
 
+import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/src/models/gas_type_model.dart';
-import 'package:gasolina_app/src/models/place_search_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert' show json;
-
-const _baseUrl = "https://randomuser.me/api/?results=100";
 
 class ApiProvider with ChangeNotifier {
 	List<GasModel> _gasList = [];
@@ -32,14 +29,10 @@ class ApiProvider with ChangeNotifier {
     notifyListeners();
   }
 
-	List<PlaceSearchModel> _places = [];
-	List<PlaceSearchModel> get places => _places;
-
   final SearchController _searchController = SearchController();
   SearchController get searchController => _searchController;
 
 	ApiProvider(){
-
 		getGasStations();
 	}
 
@@ -69,27 +62,11 @@ class ApiProvider with ChangeNotifier {
 		notifyListeners();
 	}
 
-  searchPlaces(String parameter) async {
-		if (parameter.trim().isEmpty) {
-			
-			return;
-		}
-    
-    try {
-      final url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$parameter&language=es-419&key=AIzaSyBQRF_5onV316gx07sM9CoKo6onh9S0ngA";
+  Future<List<AutocompletePrediction>> searchPlaces(String parameter) async {
+    final places = FlutterGooglePlacesSdk('AIzaSyAz_yMOu8UrZEBiwwqQnB0oM3h1xtQyH3Y');
 
-      final response = await http.get(
-        Uri.parse(url),
-      );
+    final predictions = await places.findAutocompletePredictions(parameter, countries: ['sv']);
 
-      if (response.statusCode == HttpStatus.ok) {
-        final data = json.decode( response.body );
-        var predictions = data['predictions'] as List;
-        
-        _places = predictions.map((jsonRecord) => PlaceSearchModel.fromJson(jsonRecord)).toList();
-      }
-    } catch (e) {
-      return List.empty();
-    }
+    return predictions.predictions;
 	}
 }

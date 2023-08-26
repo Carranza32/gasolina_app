@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MapProvider with ChangeNotifier {
   late GoogleMapController mapController;
@@ -24,17 +25,18 @@ class MapProvider with ChangeNotifier {
   }
 
   Future<Position> determinePosition() async {
+    bool serviceEnabled;
 		LocationPermission permission;
 
 		// Test if location services are enabled.
 		// ignore: unused_local_variable
-		bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-		// if (!serviceEnabled) {
-		//   // Location services are not enabled don't continue
-		//   // accessing the position and request users of the 
-		//   // App to enable the location services.
-		//   return Future.error('Location services are disabled.');
-		// }
+		serviceEnabled = await Geolocator.isLocationServiceEnabled();
+		if (!serviceEnabled) {
+		  // Location services are not enabled don't continue
+		  // accessing the position and request users of the 
+		  // App to enable the location services.
+		  return Future.error('Location services are disabled.');
+		}
 
 		permission = await Geolocator.checkPermission();
 
@@ -58,10 +60,14 @@ class MapProvider with ChangeNotifier {
 		Position position;
 
 		try {
-		  	position = await Geolocator.getCurrentPosition();
+      position = await Geolocator.getCurrentPosition();
 		} catch (e) {
-			position = (await Geolocator.getLastKnownPosition())!;
-		}	
+			if (kIsWeb) {
+			  position = await Geolocator.getCurrentPosition();
+			} else {
+        position = (await Geolocator.getLastKnownPosition())!;
+			}
+		}
 
 		return position;
   }
