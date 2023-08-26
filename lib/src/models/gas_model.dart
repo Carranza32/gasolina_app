@@ -4,11 +4,67 @@
 
 import 'dart:convert';
 
-List<GasModel> gasModelFromJson(String str) => List<GasModel>.from(json.decode(str).map((x) => GasModel.fromJson(x)));
+GasModel gasModelFromJson(String str) => GasModel.fromJson(json.decode(str));
 
-String gasModelToJson(List<GasModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String gasModelToJson(GasModel data) => json.encode(data.toJson());
 
 class GasModel {
+    List<GasContent>? content;
+    Pageable? pageable;
+    int? totalPages;
+    int? totalElements;
+    bool? last;
+    int? size;
+    int? number;
+    Sort? sort;
+    bool? first;
+    int? numberOfElements;
+    bool? empty;
+
+    GasModel({
+        this.content,
+        this.pageable,
+        this.totalPages,
+        this.totalElements,
+        this.last,
+        this.size,
+        this.number,
+        this.sort,
+        this.first,
+        this.numberOfElements,
+        this.empty,
+    });
+
+    factory GasModel.fromJson(Map<String, dynamic> json) => GasModel(
+        content: json["content"] == null ? [] : List<GasContent>.from(json["content"]!.map((x) => GasContent.fromJson(x))),
+        pageable: json["pageable"] == null ? null : Pageable.fromJson(json["pageable"]),
+        totalPages: json["totalPages"],
+        totalElements: json["totalElements"],
+        last: json["last"],
+        size: json["size"],
+        number: json["number"],
+        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
+        first: json["first"],
+        numberOfElements: json["numberOfElements"],
+        empty: json["empty"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "content": content == null ? [] : List<dynamic>.from(content!.map((x) => x.toJson())),
+        "pageable": pageable?.toJson(),
+        "totalPages": totalPages,
+        "totalElements": totalElements,
+        "last": last,
+        "size": size,
+        "number": number,
+        "sort": sort?.toJson(),
+        "first": first,
+        "numberOfElements": numberOfElements,
+        "empty": empty,
+    };
+}
+
+class GasContent {
     String? id;
     String? estacion;
     String? marca;
@@ -23,7 +79,7 @@ class GasModel {
     DateTime? fechaCreacion;
     DateTime? fechaActualizacion;
 
-    GasModel({
+    GasContent({
         this.id,
         this.estacion,
         this.marca,
@@ -39,108 +95,138 @@ class GasModel {
         this.fechaActualizacion,
     });
 
-    factory GasModel.fromJson(Map<String, dynamic> json) => GasModel(
+    factory GasContent.fromJson(Map<String, dynamic> json) => GasContent(
         id: json["id"],
         estacion: json["estacion"],
         marca: json["marca"],
-        departamento: json["departamento"],
-        municipio: json["municipio"],
+        departamento: json["departamento"]!,
+        municipio: json["municipio"]!,
         precio: json["precio"] == null ? null : Precio.fromJson(json["precio"]),
         tienda: json["tienda"],
         direccion: json["direccion"],
         latitude: json["latitude"]?.toDouble(),
         longitude: json["longitude"]?.toDouble(),
-        location: Location.fromJson(json["location"]),
-        fechaCreacion: DateTime.parse(json["fechaCreacion"]),
-        fechaActualizacion: DateTime.parse(json["fechaActualizacion"]),
+        location: json["location"] == null ? null : Location.fromJson(json["location"]),
+        fechaCreacion: json["fechaCreacion"] == null ? null : DateTime.parse(json["fechaCreacion"]),
+        fechaActualizacion: json["fechaActualizacion"] == null ? null : DateTime.parse(json["fechaActualizacion"]),
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "estacion": estacion,
-        "marca": marcaValues.reverse[marca],
-        "departamento": departamentoValues.reverse[departamento],
-        "municipio": municipio,
+        "marca": marca,
+        "departamento": [departamento],
+        "municipio": [municipio],
         "precio": precio?.toJson(),
         "tienda": tienda,
         "direccion": direccion,
         "latitude": latitude,
         "longitude": longitude,
-        "location": location!.toJson(),
-        "fechaCreacion": fechaCreacion!.toIso8601String(),
-        "fechaActualizacion": fechaActualizacion!.toIso8601String(),
+        "location": location?.toJson(),
+        "fechaCreacion": fechaCreacion?.toIso8601String(),
+        "fechaActualizacion": fechaActualizacion?.toIso8601String(),
     };
 }
 
-enum Departamento {
-    AHUACHAPN,
-    CHALATENANGO,
-    LA_LIBERTAD,
-    SANTA_ANA,
-    SAN_SALVADOR,
-    SONSONATE
-}
-
-final departamentoValues = EnumValues({
-    "AHUACHAPÁN": Departamento.AHUACHAPN,
-    "CHALATENANGO": Departamento.CHALATENANGO,
-    "LA LIBERTAD": Departamento.LA_LIBERTAD,
-    "SANTA ANA": Departamento.SANTA_ANA,
-    "SAN SALVADOR": Departamento.SAN_SALVADOR,
-    "SONSONATE": Departamento.SONSONATE
-});
-
 class Location {
-    double x;
-    double y;
-    Type type;
-    List<double> coordinates;
+    double? x;
+    double? y;
+    String? type;
+    List<double>? coordinates;
 
     Location({
-        required this.x,
-        required this.y,
-        required this.type,
-        required this.coordinates,
+        this.x,
+        this.y,
+        this.type,
+        this.coordinates,
     });
 
     factory Location.fromJson(Map<String, dynamic> json) => Location(
         x: json["x"]?.toDouble(),
         y: json["y"]?.toDouble(),
-        type: typeValues.map[json["type"]]!,
-        coordinates: List<double>.from(json["coordinates"].map((x) => x?.toDouble())),
+        type: json["type"]!,
+        coordinates: json["coordinates"] == null ? [] : List<double>.from(json["coordinates"]!.map((x) => x?.toDouble())),
     );
 
     Map<String, dynamic> toJson() => {
         "x": x,
         "y": y,
-        "type": typeValues.reverse[type],
-        "coordinates": List<dynamic>.from(coordinates.map((x) => x)),
+        "type": type,
+        "coordinates": coordinates == null ? [] : List<dynamic>.from(coordinates!.map((x) => x)),
     };
 }
 
-enum Type {
-    POINT
+class Pageable {
+    Sort? sort;
+    int? offset;
+    int? pageNumber;
+    int? pageSize;
+    bool? paged;
+    bool? unpaged;
+
+    Pageable({
+        this.sort,
+        this.offset,
+        this.pageNumber,
+        this.pageSize,
+        this.paged,
+        this.unpaged,
+    });
+
+    factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
+        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
+        offset: json["offset"],
+        pageNumber: json["pageNumber"],
+        pageSize: json["pageSize"],
+        paged: json["paged"],
+        unpaged: json["unpaged"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "sort": sort?.toJson(),
+        "offset": offset,
+        "pageNumber": pageNumber,
+        "pageSize": pageSize,
+        "paged": paged,
+        "unpaged": unpaged,
+    };
 }
 
-final typeValues = EnumValues({
-    "Point": Type.POINT
-});
+class Sort {
+    bool? empty;
+    bool? sorted;
+    bool? unsorted;
 
-enum Marca {
-    BANDERA_BLANCA,
-    DLC,
-    PUMA,
-    TEXACO,
-    UNO
+    Sort({
+        this.empty,
+        this.sorted,
+        this.unsorted,
+    });
+
+    factory Sort.fromJson(Map<String, dynamic> json) => Sort(
+        empty: json["empty"],
+        sorted: json["sorted"],
+        unsorted: json["unsorted"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "empty": empty,
+        "sorted": sorted,
+        "unsorted": unsorted,
+    };
 }
 
-final marcaValues = EnumValues({
-    "BANDERA BLANCA": Marca.BANDERA_BLANCA,
-    "DLC": Marca.DLC,
-    "PUMA": Marca.PUMA,
-    "TEXACO": Marca.TEXACO,
-    "UNO": Marca.UNO
-});
+class EnumValues<T> {
+    Map<String, T> map;
+    late Map<T, String> reverseMap;
+
+    EnumValues(this.map);
+
+    Map<T, String> get reverse {
+        reverseMap = map.map((k, v) => MapEntry(v, k));
+        return reverseMap;
+    }
+}
 
 class Precio {
     String id;
@@ -216,16 +302,4 @@ class Precio {
         "fechaCreacion": fechaCreacion.toIso8601String(),
         "fechaActualizacion": fechaActualizacion.toIso8601String(),
     };
-}
-
-class EnumValues<T> {
-    Map<String, T> map;
-    late Map<T, String> reverseMap;
-
-    EnumValues(this.map);
-
-    Map<T, String> get reverse {
-        reverseMap = map.map((k, v) => MapEntry(v, k));
-        return reverseMap;
-    }
 }

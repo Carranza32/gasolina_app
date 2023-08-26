@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gasolina_app/src/providers/map_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 import '../providers/api_provider.dart';
@@ -10,7 +9,7 @@ class SearchPlacesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiProvider = Provider.of<ApiProvider>(context);
-    final mapProvider = Provider.of<MapProvider>(context);
+    // final mapProvider = Provider.of<MapProvider>(context);
 
     // mapProvider.determinePosition().then((value) =>  apiProvider.getGasStations() );
 

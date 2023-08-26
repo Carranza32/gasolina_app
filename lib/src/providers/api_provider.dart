@@ -1,20 +1,21 @@
 
 import 'dart:io';
-import 'dart:js_interop';
-
 import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/src/models/gas_type_model.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert' show json;
+import 'package:http/http.dart' as http;
 
 class ApiProvider with ChangeNotifier {
-	List<GasModel> _gasList = [];
-	List<GasModel> get gasstations => _gasList;
+  GasModel _gasModel = GasModel();
+  GasModel get gasModel => _gasModel;
 
-  GasModel _gasSelected = GasModel();
-  GasModel get gasSelected => _gasSelected;
+	List<GasContent> _gasList = [];
+	List<GasContent> get gasstations => _gasList;
+
+  GasContent _gasSelected = GasContent();
+  GasContent get gasSelected => _gasSelected;
 
   GasTypeModel _gasTypeSelected = GasTypeModel.especial;
   GasTypeModel get gasTypeSelected => _gasTypeSelected;
@@ -24,7 +25,7 @@ class ApiProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  set gasSelected(GasModel gas) {
+  set gasSelected(GasContent gas) {
     _gasSelected = gas;
     notifyListeners();
   }
@@ -33,31 +34,28 @@ class ApiProvider with ChangeNotifier {
   SearchController get searchController => _searchController;
 
 	ApiProvider(){
+    print("ApiProvider");
 		getGasStations();
 	}
 
 	Future<void> getGasStations() async {
-		// final response = await http.get(
-		// 	Uri.parse(_baseUrl),
-		// 	// headers: {
-		// 	// 	HttpHeaders.authorizationHeader: user.llaveApi ?? ''
-		// 	// }
-		// );
+		final response = await http.get(
+			Uri.parse("http://localhost:8181/api/v1/gasolineras/location/13.965225/-89.561480?distance=10&page=1&size=10"),
+			headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      }
+		);
 
-		// if (response.statusCode == HttpStatus.ok) {
-		// 	final data = randomUserModelFromJson( response.body );
+		if (response.statusCode == HttpStatus.ok) {
+      GasModel gasModel = GasModel.fromJson(json.decode(response.body));
 
-		// 	_gasList = data.results!;
-		// } else {
-		// 	throw Exception('Failed to load data');
-		// }
-
-    final String data = await rootBundle.loadString('assets/gasolina_sv_api.json');
-    final List<dynamic> jsonRecords = json.decode(data);
-
-    _gasList = jsonRecords
-        .map((jsonRecord) => GasModel.fromJson(jsonRecord))
-        .toList();
+      _gasModel = gasModel;
+      _gasList = gasModel.content ?? [];
+		} else {
+			throw Exception('Failed to load data');
+		}
 
 		notifyListeners();
 	}

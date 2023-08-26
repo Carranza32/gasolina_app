@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:gasolina_app/src/providers/api_provider.dart';
@@ -8,7 +7,7 @@ import '../../constants.dart';
 import '../screens/index.dart';
 
 class GasListTile extends StatelessWidget {
-  final List<GasModel> stations;
+  final List<GasContent> stations;
   final int index;
 
   const GasListTile({super.key, required this.stations, required this.index});

@@ -1,4 +1,3 @@
-import 'dart:js_interop';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +12,9 @@ import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class DetailsScreen extends StatelessWidget {
-  final GasModel gas;
+  final GasContent gas;
 
-  DetailsScreen({required this.gas});
+  const DetailsScreen({super.key, required this.gas});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,7 @@ class DetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio!.regularSc}", "\$${gas.precio!.especialSc}", "\$${gas.precio!.dieselSc}"),
+                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio?.regularSc}", "\$${gas.precio?.especialSc}", "\$${gas.precio?.dieselSc}"),
 
                     const SizedBox(height: 30),
 
@@ -76,7 +75,7 @@ class DetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio!.regularAuto}", "\$${gas.precio!.especialAuto}", "\$${gas.precio!.dieselAuto}"),
+                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio?.regularAuto}", "\$${gas.precio?.especialAuto}", "\$${gas.precio?.dieselAuto}"),
 
                     _comoLlegar(context),
                   ],
@@ -91,7 +90,7 @@ class DetailsScreen extends StatelessWidget {
 
   Widget _mapHeader(controller){
     Set<Marker> markers = {};
-    LatLng position = LatLng(gas.location!.y, gas.location!.x);
+    LatLng position = LatLng(gas.location!.y ?? 0, gas.location!.x ?? 0);
     CameraPosition initialPosition = CameraPosition(target: position, zoom: 14);
 
     markers.add(Marker(
@@ -178,7 +177,7 @@ class DetailsScreen extends StatelessWidget {
 						icon: Icon(Icons.near_me_outlined, color: Theme.of(context).primaryColor ),
 						label: const Text("Mostrar dirección", style: TextStyle(color: Color(0xff1e2338))),
 						onPressed: () {
-							MapsLauncher.launchCoordinates(gas.location!.y, gas.location!.x);
+							MapsLauncher.launchCoordinates(gas.location!.y ?? 0, gas.location!.x ?? 0);
 						},
 					)
 				],
@@ -195,7 +194,7 @@ class DetailsScreen extends StatelessWidget {
 				// 	shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
 				// ),
 				onPressed: () {
-					MapsLauncher.launchCoordinates(gas.location!.y, gas.location!.x);
+					MapsLauncher.launchCoordinates(gas.location!.y ?? 0, gas.location!.x ?? 0);
 				},
 				child: Padding(
 					padding: const EdgeInsets.symmetric(vertical: 10),
@@ -213,6 +212,8 @@ class DetailsScreen extends StatelessWidget {
 	}
 
 	Widget _dateHeader(formatter){
+    DateTime date = gas.precio?.fecha ?? DateTime.now();
+    
 		return Padding(
 			padding: const EdgeInsets.only(left: 12),
 			child: Column(
@@ -227,7 +228,7 @@ class DetailsScreen extends StatelessWidget {
 
           FilledButton.tonal(
             onPressed: () {},
-            child: Text(timeago.format(gas.precio!.fecha, locale: 'es').toUpperCase()),
+            child: Text(timeago.format(date, locale: 'es').toUpperCase()),
           )
 				],
 			),
@@ -260,7 +261,7 @@ class DetailsScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     )),
                     const SizedBox(height: 5),
-                    Text(price1, style: const TextStyle(
+                    Text(price1 ?? "Precio no disponible", style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold
                     )),
@@ -276,7 +277,7 @@ class DetailsScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     )),
                     const SizedBox(height: 5),
-                    Text(price2, style: const TextStyle(
+                    Text(price2 ?? "Precio no disponible", style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold
                     )),
@@ -292,7 +293,7 @@ class DetailsScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     )),
                     const SizedBox(height: 5),
-                    Text(price3, style: const TextStyle(
+                    Text(price3 ?? "Precio no disponible", style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold
                     )),

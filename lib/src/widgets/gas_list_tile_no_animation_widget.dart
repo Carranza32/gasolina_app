@@ -4,10 +4,10 @@ import 'package:gasolina_app/src/providers/api_provider.dart';
 import 'package:provider/provider.dart';
 
 class GasListTileNoAnimationWidget extends StatelessWidget {
-  final List<GasModel> stations;
+  final GasContent gas;
   final int index;
 
-  const GasListTileNoAnimationWidget({super.key, required this.stations, required this.index});
+  const GasListTileNoAnimationWidget({super.key, required this.gas, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7),
       decoration: BoxDecoration(
-        color: (apiProvider.gasSelected.id == stations[index].id)? Theme.of(context).colorScheme.primaryContainer : const Color.fromARGB(255, 255, 255, 255),
+        color: (apiProvider.gasSelected.id == gas.id)? Theme.of(context).colorScheme.primaryContainer : const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(17),
         boxShadow: [
           BoxShadow(
@@ -31,14 +31,14 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           child: Image(
-            image: AssetImage("assets/gasolineras/${stations[index].marca}.png"),
+            image: AssetImage("assets/gasolineras/${gas.marca}.png"),
           ),
         ),
-        title: Text(stations[index].estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(gas.estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(stations[index].municipio ?? "", style: TextStyle(color: Colors.grey[600])),
+            Text(gas.municipio ?? "", style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 15),
 
             Row(
@@ -64,13 +64,13 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(stations[index].precio!.regularSc.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
-            Text(stations[index].precio!.regularAuto.toString() ?? "", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(gas.precio?.regularSc.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(gas.precio?.regularAuto.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
           ],
         ),
 
         onTap: () {
-          apiProvider.gasSelected = stations[index];
+          apiProvider.gasSelected = gas;
         }
       ),
     );

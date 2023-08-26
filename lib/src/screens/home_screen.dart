@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/responsive.dart';
 import 'package:gasolina_app/src/models/gas_model.dart';
@@ -18,7 +16,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Size _size = MediaQuery.of(context).size;
     final apiProvider = Provider.of<ApiProvider>(context);
-    final List<GasModel> stations = apiProvider.gasstations;
+    final List<GasContent> stations = apiProvider.gasstations;
+    print("HomeScreen: ${stations.length}");
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +50,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _listContent(stations){
+  Widget _listContent(List<GasContent> stations){
     return Column(
       children: [
         const Padding(
@@ -70,7 +69,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _listContentNoAnimation(stations, apiProvider){
+  Widget _listContentNoAnimation(List<GasContent> stations, apiProvider){
     return Column(
       children: [
         const Padding(
@@ -107,15 +106,15 @@ class HomeScreen extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        Expanded(
+        (stations.length > 0) ? Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16,),
             itemCount: stations.length,
             itemBuilder: (context, index) {
-              return GasListTileNoAnimationWidget(stations: stations, index: index);
+              return GasListTileNoAnimationWidget(gas: stations[index], index: index);
             },
           ),
-        ),
+        ) : const Center(child: CircularProgressIndicator()),
       ],
     );
   }
