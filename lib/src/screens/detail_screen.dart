@@ -45,7 +45,7 @@ class DetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _heroHeader(),
+                    _heroHeader(context),
 
                     _dateHeader(formatter),
 
@@ -113,7 +113,7 @@ class DetailsScreen extends StatelessWidget {
     );
 	}
 
-	Widget _heroHeader(){
+	Widget _heroHeader(context){
 		return Hero(
 			tag: gas.id ?? "",
 			child: Container(
@@ -147,15 +147,15 @@ class DetailsScreen extends StatelessWidget {
 								const SizedBox(height: 10),
                 
 								Row(
-									children: [
-										const Icon(Icons.place_outlined, size: 14),
-										const SizedBox(width: 10),
-										AutoSizeText(gas.direccion ?? "", overflow: TextOverflow.ellipsis, style: const TextStyle(
-											fontSize: 13,
-											color: Color(0xff1e2338)
-										)),
-									],
-								)
+                  children: [
+                    const Icon(Icons.place_outlined, size: 14),
+                    const SizedBox(width: 10),
+                    AutoSizeText(gas.direccion ?? "", overflow: TextOverflow.ellipsis, style: const TextStyle(
+                      fontSize: 13,
+                      color: Color(0xff1e2338)
+                    )),
+                  ],
+                )
 							],
 						)
 					],

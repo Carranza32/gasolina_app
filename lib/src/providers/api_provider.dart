@@ -7,6 +7,8 @@ import 'package:gasolina_app/src/models/gas_type_model.dart';
 import 'dart:convert' show json;
 import 'package:http/http.dart' as http;
 
+const _apiKey = "AIzaSyAz_yMOu8UrZEBiwwqQnB0oM3h1xtQyH3Y";
+
 class ApiProvider with ChangeNotifier {
   GasModel _gasModel = GasModel();
   GasModel get gasModel => _gasModel;
@@ -35,12 +37,12 @@ class ApiProvider with ChangeNotifier {
 
 	ApiProvider(){
     print("ApiProvider");
-		getGasStations();
+		getGasStations(const LatLng(lat: 13.965225, lng: -89.561480));
 	}
 
-	Future<void> getGasStations() async {
+	Future<void> getGasStations(LatLng position) async {
 		final response = await http.get(
-			Uri.parse("http://localhost:8181/api/v1/gasolineras/location/13.965225/-89.561480?distance=10&page=1&size=10"),
+			Uri.parse("http://localhost:8181/api/v1/gasolineras/location/${position.lat}/${position.lng}?distance=10&page=1&size=10"),
 			headers: {
         "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
@@ -61,10 +63,28 @@ class ApiProvider with ChangeNotifier {
 	}
 
   Future<List<AutocompletePrediction>> searchPlaces(String parameter) async {
-    final places = FlutterGooglePlacesSdk('AIzaSyAz_yMOu8UrZEBiwwqQnB0oM3h1xtQyH3Y');
+    final places = FlutterGooglePlacesSdk(_apiKey);
 
     final predictions = await places.findAutocompletePredictions(parameter, countries: ['sv']);
 
     return predictions.predictions;
 	}
+
+  Future<LatLng> getLatLngFromPlaceId(String placeId) async {
+    final url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_apiKey';
+    
+    final response = await http.get(Uri.parse(url));
+    
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final location = data['result']['geometry']['location'];
+      
+      final double lat = location['lat'];
+      final double lng = location['lng'];
+
+      return LatLng(lat: lat, lng: lng);
+    } else {
+      throw Exception('Failed to fetch place details');
+    }
+  }
 }

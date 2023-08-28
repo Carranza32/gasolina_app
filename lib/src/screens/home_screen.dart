@@ -17,7 +17,6 @@ class HomeScreen extends StatelessWidget {
     // Size _size = MediaQuery.of(context).size;
     final apiProvider = Provider.of<ApiProvider>(context);
     final List<GasContent> stations = apiProvider.gasstations;
-    print("HomeScreen: ${stations.length}");
 
     return Scaffold(
       appBar: AppBar(

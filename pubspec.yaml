@@ -37,9 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   http: ^1.1.0
-  very_good_infinite_list: ^0.7.0
   permission_handler: ^10.4.3
-  shimmer: ^3.0.0
   shared_preferences: ^2.2.0
   timeago: ^3.5.0
   lottie: ^2.6.0
@@ -53,6 +51,7 @@ dependencies:
   geolocator: ^10.0.0
   auto_size_text: ^3.0.0
   flutter_google_places_sdk: ^0.3.6
+  infinite_scroll_pagination: ^4.0.0
 
 dev_dependencies:
   flutter_test:

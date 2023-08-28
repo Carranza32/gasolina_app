@@ -16,7 +16,7 @@ class SearchPlacesWidget extends StatelessWidget {
     return SearchAnchor.bar(
       barElevation: MaterialStateProperty.all(3),
       viewElevation: 4,
-      isFullScreen: true,
+      isFullScreen: false,
       viewHintText: 'Busca una direccion',
       barHintText: 'Busca una direccion',
       searchController: apiProvider.searchController,
@@ -24,11 +24,13 @@ class SearchPlacesWidget extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
+            apiProvider.searchPlaces(apiProvider.searchController.text);
           },
         ),
         IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
+            apiProvider.searchController.clear();
           },
         ),
       ],
@@ -45,6 +47,15 @@ class SearchPlacesWidget extends StatelessWidget {
             return ListTile(
               titleAlignment: ListTileTitleAlignment.center,
               title: Text(list[index].fullText),
+              onTap: () async {
+                controller.text = list[index].fullText;
+
+                final latLng = await apiProvider.getLatLngFromPlaceId(list[index].placeId);
+
+                apiProvider.getGasStations(latLng);
+
+                controller.closeView(controller.text);
+              },
             );
           },
         );
