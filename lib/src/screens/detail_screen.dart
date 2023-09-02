@@ -117,10 +117,10 @@ class DetailsScreen extends StatelessWidget {
 		return Hero(
 			tag: gas.id ?? "",
 			child: Container(
+        width: double.infinity,
 				padding: const EdgeInsets.all(15),
 				child: Row(
 					mainAxisAlignment: MainAxisAlignment.start,
-					mainAxisSize: MainAxisSize.min,
 					children: [
 						SizedBox(
 							height: 80,
@@ -133,6 +133,7 @@ class DetailsScreen extends StatelessWidget {
 							),
 						),
 						const SizedBox(width: 15),
+            
 						Column(
 							crossAxisAlignment: CrossAxisAlignment.start,
 							mainAxisSize: MainAxisSize.min,
@@ -150,7 +151,7 @@ class DetailsScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.place_outlined, size: 14),
                     const SizedBox(width: 10),
-                    AutoSizeText(gas.direccion ?? "", overflow: TextOverflow.ellipsis, style: const TextStyle(
+                    AutoSizeText(gas.direccion ?? "", style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xff1e2338)
                     )),

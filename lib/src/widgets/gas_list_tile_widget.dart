@@ -3,14 +3,12 @@ import 'package:gasolina_app/src/models/gas_model.dart';
 import 'package:gasolina_app/src/providers/api_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants.dart';
 import '../screens/index.dart';
 
 class GasListTile extends StatelessWidget {
-  final List<GasContent> stations;
-  final int index;
+  final GasContent gas;
 
-  const GasListTile({super.key, required this.stations, required this.index});
+  const GasListTile({super.key, required this.gas});
 
   @override
   Widget build(BuildContext context) {
@@ -20,20 +18,28 @@ class GasListTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 7),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: (apiProvider.gasSelected.id == gas.id)? Theme.of(context).colorScheme.primaryContainer : const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(17),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: ListTile(
         leading: CircleAvatar(
           child: Image(
-            image: AssetImage("assets/gasolineras/${stations[index].marca}.png"),
+            image: AssetImage("assets/gasolineras/${gas.marca}.png"),
           ),
         ),
-        title: Text(stations[index].estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(gas.estacion ?? "", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(stations[index].municipio ?? "", style: TextStyle(color: Colors.grey[600])),
+            Text(gas.municipio ?? "", style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 15),
 
             Row(
@@ -43,40 +49,27 @@ class GasListTile extends StatelessWidget {
                   label: const Text('Direcciones', style: TextStyle(fontSize: 12)),
                   onPressed: () {},
                 ),
-
-                const SizedBox(width: 15),
-
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.share, size: 14),
-                  label: const Text('Compartir', style: TextStyle(fontSize: 12)),
-                  onPressed: () {},
-                )
               ],
             )
           ],
         ),
 
-        trailing: TextButton( 
-          onPressed: () {}, 
-          // styling the button
-          style: ElevatedButton.styleFrom( 
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(20),
-            // Button color
-            backgroundColor: kOnPrimaryColor, 
-          ),
-          // icon of the button
-          child: const Icon(Icons.star_border, color: kPrimaryColor),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(gas.precio?.regularSc.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(gas.precio?.regularAuto.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+          ],
         ),
 
         onTap: () {
-          apiProvider.gasSelected = stations[index];
+          apiProvider.gasSelected = gas;
 
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => DetailsScreen(gas: stations[index])),
+            MaterialPageRoute(builder: (context) => DetailsScreen(gas: gas)),
           );
-        },
+        }
       ),
     );
   }

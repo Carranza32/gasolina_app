@@ -20,11 +20,11 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gasolina App'),
+        title: const Text('Gasolina sv'),
       ),
       body: Responsive(
-        mobile: _listContentNoAnimation(stations, apiProvider),
-        tablet: _listContentNoAnimation(stations, apiProvider),
+        mobile: _listContent(stations, apiProvider),
+        tablet: _listContent(stations, apiProvider),
         desktop: Row(
           children: [
             Expanded(
@@ -49,22 +49,57 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _listContent(List<GasContent> stations){
+  Widget _listContent(List<GasContent> stations, ApiProvider apiProvider){
     return Column(
       children: [
         const Padding(
           padding: EdgeInsets.all(8.0),
           child:  SearchPlacesWidget(),
         ),
-        Expanded(
+
+        const SizedBox(height: 20),
+
+        _buildFilterGas(apiProvider),
+
+        const SizedBox(height: 20),
+
+        (stations.length > 0) ? Expanded(
           child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: stations.length,
             itemBuilder: (context, index) {
-              return GasListTile(stations: stations, index: index);
+              return GasListTile(gas: stations[index]);
             },
           ),
+        ) : const Center(child: CircularProgressIndicator()),
+      ],
+    );
+  }
+
+  Widget _buildFilterGas(ApiProvider apiProvider){
+    return SegmentedButton<GasTypeModel>(
+      segments: const <ButtonSegment<GasTypeModel>> [
+        ButtonSegment<GasTypeModel>(
+          value: GasTypeModel.especial,
+          label: Text('Especial'),
+        ),
+        ButtonSegment<GasTypeModel>(
+          value: GasTypeModel.regular,
+          label: Text('Regular'),
+        ),
+        ButtonSegment<GasTypeModel>(
+          value: GasTypeModel.diesel,
+          label: Text('Diesel'),
+        ),
+        ButtonSegment<GasTypeModel>(
+          value: GasTypeModel.iondiesel,
+          label: Text('Ion Diesel'),
         ),
       ],
+      selected: <GasTypeModel>{ apiProvider.gasTypeSelected },
+      onSelectionChanged: (Set<GasTypeModel> newSelection) {
+        apiProvider.gasTypeSelected = newSelection.first;
+      },
     );
   }
 
@@ -78,30 +113,7 @@ class HomeScreen extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        SegmentedButton<GasTypeModel>(
-          segments: const <ButtonSegment<GasTypeModel>> [
-            ButtonSegment<GasTypeModel>(
-              value: GasTypeModel.especial,
-              label: Text('Especial'),
-            ),
-            ButtonSegment<GasTypeModel>(
-              value: GasTypeModel.regular,
-              label: Text('Regular'),
-            ),
-            ButtonSegment<GasTypeModel>(
-              value: GasTypeModel.diesel,
-              label: Text('Diesel'),
-            ),
-            ButtonSegment<GasTypeModel>(
-              value: GasTypeModel.iondiesel,
-              label: Text('Ion Diesel'),
-            ),
-          ],
-          selected: <GasTypeModel>{ apiProvider.gasTypeSelected },
-          onSelectionChanged: (Set<GasTypeModel> newSelection) {
-            apiProvider.gasTypeSelected = newSelection.first;
-          },
-        ),
+        _buildFilterGas(apiProvider),
 
         const SizedBox(height: 20),
 

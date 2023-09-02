@@ -48,14 +48,6 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
                   label: const Text('Direcciones', style: TextStyle(fontSize: 12)),
                   onPressed: () {},
                 ),
-
-                const SizedBox(width: 15),
-
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.share, size: 14),
-                  label: const Text('Compartir', style: TextStyle(fontSize: 12)),
-                  onPressed: () {},
-                )
               ],
             )
           ],
