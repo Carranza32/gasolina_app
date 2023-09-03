@@ -8,12 +8,17 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:convert' show json;
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 const _apiKey = "AIzaSyAz_yMOu8UrZEBiwwqQnB0oM3h1xtQyH3Y";
+const _baseUrl = "https://gasolina-sv-api-7a96453f3504.herokuapp.com/api/v1/gasolineras";
 
 class ApiProvider with ChangeNotifier {
   GasModel _gasModel = GasModel();
   GasModel get gasModel => _gasModel;
+
+  LatLng _initialPosition = const LatLng(lat: 13.965225, lng: -89.561480);
+  LatLng get position => _initialPosition;
 
 	List<GasContent> _gasList = [];
 	List<GasContent> get gasstations => _gasList;
@@ -24,8 +29,38 @@ class ApiProvider with ChangeNotifier {
   GasTypeModel _gasTypeSelected = GasTypeModel.especial;
   GasTypeModel get gasTypeSelected => _gasTypeSelected;
 
+  final SearchController _searchController = SearchController();
+  SearchController get searchController => _searchController;
+
+  final ScrollController _scrollController = ScrollController();
+  ScrollController get scrollController => _scrollController;
+
+  final PagingController<int, GasContent> _pagingController = PagingController(firstPageKey: 0);
+  PagingController<int, GasContent> get pagingController => _pagingController;
+
+  int _page = 0;
+  int get page => _page;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  set page(int page) {
+    _page = page;
+    notifyListeners();
+  }
+
   set gasTypeSelected(GasTypeModel gasType) {
     _gasTypeSelected = gasType;
+    notifyListeners();
+  }
+
+  set initialPosition(LatLng position) {
+    _initialPosition = position;
     notifyListeners();
   }
 
@@ -34,32 +69,43 @@ class ApiProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  final SearchController _searchController = SearchController();
-  SearchController get searchController => _searchController;
-
 	ApiProvider(){
-		getGasStations(const LatLng(lat: 13.965225, lng: -89.561480));
+    _pagingController.addPageRequestListener((pageKey) {
+      getGasStations(_initialPosition, pageKey: pageKey);
+    });
 	}
 
-	Future<void> getGasStations(LatLng position) async {
-		final response = await http.get(
-			Uri.parse("http://localhost:8181/api/v1/gasolineras/location/${position.lat}/${position.lng}?distance=10&page=1&size=10"),
-			headers: {
-        "Access-Control-Allow-Origin": "*",
-        'Content-Type': 'application/json',
-        'Accept': '*/*'
+	Future<void> getGasStations(LatLng position, {pageKey = 0}) async {
+    String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIyMDUwLTA4LTMxVDEwOjQ2OjQ3WiJ9.azjOWqEmeDTG7vsnYHeteONaRCOLKEKFUF21EF0XMmI";
+
+		try {
+		  final response = await http.get(
+        Uri.parse("$_baseUrl/location/${position.lat}/${position.lng}?distance=10&page=$pageKey&size=20"),
+        headers: {
+          'Authorization': 'Bearer $token',
+          "Access-Control-Allow-Origin": "*",
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+        }
+      );
+
+      if (response.statusCode == HttpStatus.ok) {
+        GasModel gasModel = GasModel.fromJson(json.decode(response.body));
+        _gasModel = gasModel;
+
+        final isLastPage = _gasModel.last ?? false;
+
+        if (isLastPage) {
+          _pagingController.appendLastPage(_gasModel.content ?? []);
+        } else {
+          final nextPageKey = pageKey + _gasModel.content?.length;
+
+          _pagingController.appendPage(_gasModel.content ?? [], nextPageKey);
+        }
       }
-		);
-
-		if (response.statusCode == HttpStatus.ok) {
-      GasModel gasModel = GasModel.fromJson(json.decode(response.body));
-
-      _gasModel = gasModel;
-      _gasList = gasModel.content ?? [];
-		} else {
-			throw Exception('Failed to load data');
+		} catch (error) {
+			_pagingController.error = error;
 		}
-
 		notifyListeners();
 	}
 
@@ -148,6 +194,8 @@ class ApiProvider with ChangeNotifier {
         position = (await Geolocator.getLastKnownPosition())!;
 			}
 		}
+
+    notifyListeners();
 
 		return position;
   }

@@ -7,6 +7,7 @@ import 'package:gasolina_app/src/screens/detail_screen.dart';
 import 'package:gasolina_app/src/widgets/gas_list_tile_no_animation_widget.dart';
 import 'package:gasolina_app/src/widgets/gas_list_tile_widget.dart';
 import 'package:gasolina_app/src/widgets/search_places_widget.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -63,15 +64,14 @@ class HomeScreen extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        (stations.length > 0) ? Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: stations.length,
-            itemBuilder: (context, index) {
-              return GasListTile(gas: stations[index]);
+        PagedListView<int, GasContent>(
+          pagingController: apiProvider.pagingController,
+          builderDelegate: PagedChildBuilderDelegate<GasContent>(
+            itemBuilder: (context, item, index) {
+              return GasListTile(gas: item);
             },
           ),
-        ) : const Center(child: CircularProgressIndicator()),
+        ),
       ],
     );
   }
@@ -117,8 +117,9 @@ class HomeScreen extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        (stations.length > 0) ? Expanded(
+        (apiProvider.isLoading == false) ? Expanded(
           child: ListView.builder(
+            controller: apiProvider.scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 16,),
             itemCount: stations.length,
             itemBuilder: (context, index) {
