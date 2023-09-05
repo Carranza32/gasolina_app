@@ -70,17 +70,21 @@ class ApiProvider with ChangeNotifier {
   }
 
 	ApiProvider(){
-    _pagingController.addPageRequestListener((pageKey) {
-      getGasStations(_initialPosition, pageKey: pageKey);
+    getGasStations(_initialPosition);
+
+    determinePosition().then((value) async {
+      getGasStations( LatLng(lat: value.latitude, lng: value.longitude) );
     });
 	}
 
 	Future<void> getGasStations(LatLng position, {pageKey = 0}) async {
+    print("Get gas");
     String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIyMDUwLTA4LTMxVDEwOjQ2OjQ3WiJ9.azjOWqEmeDTG7vsnYHeteONaRCOLKEKFUF21EF0XMmI";
 
 		try {
+      isLoading = true;
 		  final response = await http.get(
-        Uri.parse("$_baseUrl/location/${position.lat}/${position.lng}?distance=10&page=$pageKey&size=20"),
+        Uri.parse("$_baseUrl/location/${position.lat}/${position.lng}?distance=10&page=$pageKey&size=100"),
         headers: {
           'Authorization': 'Bearer $token',
           "Access-Control-Allow-Origin": "*",
@@ -91,20 +95,14 @@ class ApiProvider with ChangeNotifier {
 
       if (response.statusCode == HttpStatus.ok) {
         GasModel gasModel = GasModel.fromJson(json.decode(response.body));
+        
         _gasModel = gasModel;
-
-        final isLastPage = _gasModel.last ?? false;
-
-        if (isLastPage) {
-          _pagingController.appendLastPage(_gasModel.content ?? []);
-        } else {
-          final nextPageKey = pageKey + _gasModel.content?.length;
-
-          _pagingController.appendPage(_gasModel.content ?? [], nextPageKey);
-        }
+        _gasList = gasModel.content ?? [];
+        isLoading = false;
       }
 		} catch (error) {
 			_pagingController.error = error;
+      isLoading = false;
 		}
 		notifyListeners();
 	}

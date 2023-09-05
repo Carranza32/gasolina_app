@@ -64,14 +64,15 @@ class HomeScreen extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        PagedListView<int, GasContent>(
-          pagingController: apiProvider.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<GasContent>(
-            itemBuilder: (context, item, index) {
-              return GasListTile(gas: item);
+        (apiProvider.isLoading == false) ? Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16,),
+            itemCount: stations.length,
+            itemBuilder: (context, index) {
+              return GasListTile(gas: stations[index]);
             },
           ),
-        ),
+        ) : const Center(child: CircularProgressIndicator()),
       ],
     );
   }
@@ -119,7 +120,6 @@ class HomeScreen extends StatelessWidget {
 
         (apiProvider.isLoading == false) ? Expanded(
           child: ListView.builder(
-            controller: apiProvider.scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 16,),
             itemCount: stations.length,
             itemBuilder: (context, index) {

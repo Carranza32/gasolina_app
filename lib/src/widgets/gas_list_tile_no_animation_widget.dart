@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gasolina_app/src/models/gas_model.dart';
+import 'package:gasolina_app/src/models/gas_type_model.dart';
 import 'package:gasolina_app/src/providers/api_provider.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
 
 class GasListTileNoAnimationWidget extends StatelessWidget {
@@ -12,6 +14,28 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiProvider = Provider.of<ApiProvider>(context);
+    String? precioSC = "";
+    String? precioAuto = "";
+
+    if (apiProvider.gasTypeSelected == GasTypeModel.regular) {
+      precioSC = (gas.precio?.regularSc == null) ? 'No disponible' : gas.precio?.regularSc.toString();
+      precioAuto = (gas.precio?.regularAuto == null) ? 'No disponible' : gas.precio?.regularAuto.toString();
+    }
+
+    if (apiProvider.gasTypeSelected == GasTypeModel.especial) {
+      precioSC = (gas.precio?.especialSc == null) ? 'No disponible' : gas.precio?.especialSc.toString();
+      precioAuto = (gas.precio?.especialAuto == null) ? 'No disponible' : gas.precio?.especialAuto.toString();
+    }
+
+    if (apiProvider.gasTypeSelected == GasTypeModel.diesel) {
+      precioSC = (gas.precio?.dieselSc == null) ? 'No disponible' : gas.precio?.dieselSc.toString();
+      precioAuto = (gas.precio?.dieselAuto == null) ? 'No disponible' : gas.precio?.dieselAuto.toString();
+    }
+
+    if (apiProvider.gasTypeSelected == GasTypeModel.iondiesel) {
+      precioSC = (gas.precio?.ionDieselSc == null) ? 'No disponible' : gas.precio?.ionDieselSc.toString();
+      precioAuto = (gas.precio?.ionDieselAuto == null) ? 'No disponible' : gas.precio?.ionDieselAuto.toString();
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -46,7 +70,9 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
                 OutlinedButton.icon(
                   icon: const Icon(Icons.directions, size: 14),
                   label: const Text('Direcciones', style: TextStyle(fontSize: 12)),
-                  onPressed: () {},
+                  onPressed: () {
+                    MapsLauncher.launchCoordinates(gas.location!.y ?? 0, gas.location!.x ?? 0);
+                  },
                 ),
               ],
             )
@@ -56,8 +82,8 @@ class GasListTileNoAnimationWidget extends StatelessWidget {
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(gas.precio?.regularSc.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
-            Text(gas.precio?.regularAuto.toString() ?? 'Precio no disponible', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(precioSC!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
+            Text(precioAuto!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold) ),
           ],
         ),
 

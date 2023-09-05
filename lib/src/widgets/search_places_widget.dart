@@ -11,10 +11,6 @@ class SearchPlacesWidget extends StatelessWidget {
     final apiProvider = Provider.of<ApiProvider>(context);
     // final mapProvider = Provider.of<MapProvider>(context);
 
-    apiProvider.determinePosition().then((value) async {
-      apiProvider.getGasStations( LatLng(lat: value.latitude, lng: value.longitude) );
-    });
-
     return SearchAnchor.bar(
       barElevation: MaterialStateProperty.all(3),
       viewElevation: 4,

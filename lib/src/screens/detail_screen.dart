@@ -22,6 +22,14 @@ class DetailsScreen extends StatelessWidget {
 
     final controller = Provider.of<MapProvider>(context);
 
+    String? regularSC = (gas.precio?.regularSc == null) ? '-' : gas.precio?.regularSc.toString();
+    String? especialSC = (gas.precio?.especialSc == null) ? '-' : gas.precio?.especialSc.toString();
+    String? dieselSC = (gas.precio?.dieselSc == null) ? '-' : gas.precio?.dieselSc.toString();
+
+    String? regularAuto = (gas.precio?.regularAuto == null) ? '-' : gas.precio?.regularAuto.toString();
+    String? especialAuto = (gas.precio?.especialAuto == null) ? '-' : gas.precio?.especialAuto.toString();
+    String? dieselAuto = (gas.precio?.dieselAuto == null) ? '-' : gas.precio?.dieselAuto.toString();
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -47,6 +55,21 @@ class DetailsScreen extends StatelessWidget {
                   children: [
                     _heroHeader(context),
 
+                    Row(
+                      children: [
+                        const Icon(Icons.place),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          child: Text(gas.direccion ?? "", overflow: TextOverflow.ellipsis, maxLines: 2, style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xff1e2338)
+                          )),
+                        )
+                      ],
+                    ),
+
                     _dateHeader(formatter),
 
                     const SizedBox(height: 30),
@@ -61,7 +84,7 @@ class DetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio?.regularSc}", "\$${gas.precio?.especialSc}", "\$${gas.precio?.dieselSc}"),
+                    _priceList(context, "Regular", "Especial", "Diésel", "\$$regularSC", "\$$especialSC", "\$$dieselSC"),
 
                     const SizedBox(height: 30),
 
@@ -75,7 +98,7 @@ class DetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    _priceList(context, "Regular", "Especial", "Diésel", "\$${gas.precio?.regularAuto}", "\$${gas.precio?.especialAuto}", "\$${gas.precio?.dieselAuto}"),
+                    _priceList(context, "Regular", "Especial", "Diésel", "\$$regularAuto", "\$$especialAuto", "\$$dieselAuto"),
 
                     _comoLlegar(context),
                   ],
@@ -114,55 +137,38 @@ class DetailsScreen extends StatelessWidget {
 	}
 
 	Widget _heroHeader(context){
-		return Hero(
-			tag: gas.id ?? "",
-			child: Container(
-        width: double.infinity,
-				padding: const EdgeInsets.all(15),
-				child: Row(
-					mainAxisAlignment: MainAxisAlignment.start,
-					children: [
-						SizedBox(
-							height: 80,
-							width: 80,
-							child: ClipRRect(
-								borderRadius: BorderRadius.circular(10),
-								child: Image(
-                  image: AssetImage("assets/gasolineras/${gas.marca}.png"),
-                ),
-							),
-						),
-						const SizedBox(width: 15),
-            
-						Column(
-							crossAxisAlignment: CrossAxisAlignment.start,
-							mainAxisSize: MainAxisSize.min,
-							children: [
-								Flexible(
-									child: AutoSizeText(gas.estacion ?? "", overflow: TextOverflow.ellipsis, style: const TextStyle(
-										color: Color(0xff1e2338),
-										fontSize: 23,
-										fontWeight: FontWeight.bold
-									)),
-								),
-								const SizedBox(height: 10),
-                
-								Row(
-                  children: [
-                    const Icon(Icons.place_outlined, size: 14),
-                    const SizedBox(width: 10),
-                    AutoSizeText(gas.direccion ?? "", style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xff1e2338)
-                    )),
-                  ],
-                )
-							],
-						)
-					],
-				),
-			),
-		);
+		return Container(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image(
+                image: AssetImage("assets/gasolineras/${gas.marca}.png"),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 15),
+          
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(gas.estacion ?? "", overflow: TextOverflow.ellipsis, style: const TextStyle(
+                color: Color(0xff1e2338),
+                fontSize: 23,
+                fontWeight: FontWeight.bold
+              )),
+            ],
+          )
+        ],
+      ),
+    );
 	}
 
 	Widget _actions(context, size){
@@ -258,7 +264,7 @@ class DetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label1, style: const TextStyle(
+                    Text((label1), style: const TextStyle(
                       fontWeight: FontWeight.w500,
                     )),
                     const SizedBox(height: 5),
